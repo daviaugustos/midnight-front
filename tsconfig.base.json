@@ -14,7 +14,23 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@mariadeliveryapp/domain/navigation/routes": [
+        "libs/mariadeliveryapp/domain/navigation/routes/src/index.ts"
+      ],
+      "@mariadeliveryapp/domain/state/auth": [
+        "libs/mariadeliveryapp/domain/state/auth/src/index.ts"
+      ],
+      "@mariadeliveryapp/domain/state/store": [
+        "libs/mariadeliveryapp/domain/state/store/src/index.ts"
+      ],
+      "@mariadeliveryapp/features/login": [
+        "libs/mariadeliveryapp/features/login/src/index.ts"
+      ],
+      "@mariadeliveryapp/services/auth": [
+        "libs/mariadeliveryapp/services/auth/src/index.ts"
+      ]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
