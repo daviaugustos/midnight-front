@@ -33,7 +33,7 @@ jobs:
 
       - uses: actions/checkout@v2
       - name: Build Android Composite
-        uses: daviaugustos/Nrwl-Nx-Android-Build-Action@v5
+        uses: daviaugustos/Nrwl-Nx-Android-Build-Action@v6
         with:
           app-path: ${{ env.NX_RN_APP_PATH }}
           nx-app-name: ${{ env.NX_RN_APP_NAME }}
