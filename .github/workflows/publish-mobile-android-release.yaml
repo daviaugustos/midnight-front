@@ -18,7 +18,7 @@ on:
 env:
   NX_RN_APP_PATH: ${{ 'apps/bierdeliveryapp' }}
   NX_RN_APP_NAME: ${{ 'bierdeliveryapp' }}
-  ANDROID_VARIANT: ${{ 'release' }}
+  ANDROID_VARIANT: ${{ '' }}
   ANDROID_VARIANT_RELEASE_PATH: ${{ '/android/app/build/outputs/apk/release' }}
   ANDROID_APK_FILENAME: ${{ 'app-release.apk' }}
 
