@@ -1,0 +1,68 @@
+name: Publish Mobile iOS - Staging
+
+on:
+  push:
+    branches:
+      - 'staging'
+    paths:
+      - 'apps/bierdeliveryapp/**/*'
+      - 'libs/bierdeliveryapp/**/*'
+
+env:
+  NX_RN_APP_PATH: ${{ 'apps/bierdeliveryapp' }}
+  NX_RN_APP_NAME: ${{ 'bierdeliveryapp' }}
+
+jobs:
+  ios-build:
+    name: Build and release iOS app
+    runs-on: macos-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Setup Ruby 
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1.2'
+
+      - name: Install dependencies
+        shell: bash
+        run: yarn
+
+      - name: Apply symlink from root node_modules 
+        shell: bash
+        run: cd ${{ env.NX_RN_APP_PATH }} && npx nx run ${{ env.NX_RN_APP_NAME }}:ensure-symlink
+
+      - name: Install Fastlane
+        shell: bash
+        run:  cd ${{ env.NX_RN_APP_PATH }}/ios && bundle install
+
+      - name: Install iOS CocoaPods
+        shell: bash
+        run: cd ${{ env.NX_RN_APP_PATH }}/ios && pod install
+
+      - name: Build and release .ipa file to Appcenter
+        shell: bash
+        run: cd ${{ env.NX_RN_APP_PATH }}/ios && fastlane releaseDev
+        env:
+          APPCENTER_API_TOKEN: ${{ secrets.APPCENTER_API_TOKEN }}
+          APPCENTER_OWNER_NAME: ${{ secrets.APPCENTER_OWNER_NAME }}
+          APPCENTER_OWNER_TYPE: ${{ secrets.APPCENTER_OWNER_TYPE }}
+          APPCENTER_APP_NAME: ${{ secrets.APPCENTER_APP_NAME }}
+          APPCENTER_DESTINATIONS: ${{ secrets.APPCENTER_DESTINATIONS }}
+          APPCENTER_RELEASE_NOTES: ${{ github.event.inputs.releaseNotes }}
+          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+          MATCH_GIT_PERSONAL_TOKEN: ${{ secrets.MATCH_GIT_PERSONAL_TOKEN }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          APPLE_DEVELOPER_ACCOUNT_USERNAME: ${{ secrets.APPLE_DEVELOPER_ACCOUNT_USERNAME }}
+          APPLE_DEVELOPER_ITC_TEAM_ID: ${{ secrets.APPLE_DEVELOPER_ITC_TEAM_ID }}
+          APPLE_DEVELOPER_TEAM_ID: ${{ secrets.APPLE_DEVELOPER_TEAM_ID }}
+          ASCAPI_KEY_ID: ${{ secrets.ASCAPI_KEY_ID }}
+          ASCAPI_ISSUER_ID: ${{ secrets.ASCAPI_ISSUER_ID }}
+          ASCAPI_KEY_CONTENT: ${{ secrets.ASCAPI_KEY_CONTENT }}
