@@ -1,9 +1,16 @@
-name: Publish Mobile Android - Staging
+name: Publish Mobile Android - Release
 
 on:
+  workflow_dispatch:
+    inputs:
+      releaseNotes:
+        description: 'Changes on this build: '
+        required: true
+        default: 'No relevant changes.'
+        type: string
   push:
     branches:
-      - 'staging'
+      - 'release'
     paths:
       - 'apps/bierdeliveryapp/**/*'
       - 'libs/bierdeliveryapp/**/*'
@@ -65,7 +72,7 @@ jobs:
       - name: Upload artifact to App Center
         uses: wzieba/AppCenter-Github-Action@v1
         with:
-          appName: Midnight-Front/Maria-Delivery-App
+          appName: Midnight-Front/Bier-Delivery-Android
           token: ${{secrets.BIER_DELIVERY_APP_APPCENTER_TOKEN_ANDROID}}
           group: Collaborators
           file: ${{ env.ANDROID_APK_FILENAME }}

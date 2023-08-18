@@ -1,12 +1,13 @@
-name: Publish Mobile iOS - Staging
+name: Publish Mobile iOS - Release
 
 on:
-  push:
-    branches:
-      - 'staging'
-    paths:
-      - 'apps/bierdeliveryapp/**/*'
-      - 'libs/bierdeliveryapp/**/*'
+  workflow_dispatch:
+    inputs:
+      releaseNotes:
+        description: 'Changes on this build: '
+        required: true
+        default: 'No relevant changes.'
+        type: string
 
 env:
   NX_RN_APP_PATH: ${{ 'apps/bierdeliveryapp' }}

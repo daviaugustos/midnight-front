@@ -26,13 +26,13 @@
         "scheme": "Bierdeliveryapp"
       }
     },
-    "run-ios-staging": {
+    "run-ios-release": {
       "executor": "@nx/react-native:run-ios",
       "dependsOn": ["ensure-symlink", "sync-deps", "pod-install"],
       "options": {
         "install": false,
         "simulator": "iPhone 14 Pro Max",
-        "scheme": "Bierdeliveryapp-Staging"
+        "scheme": "Bierdeliveryapp-Release"
       }
     },
     "bundle-ios": {
@@ -50,11 +50,11 @@
       "dependsOn": ["ensure-symlink", "sync-deps"],
       "options": {}
     },
-    "run-android-staging": {
+    "run-android-release": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "apps/bierdeliveryapp/android",
-        "commands": ["ENVFILE=.env.staging ./gradlew app:installDebug"],
+        "commands": ["ENVFILE=.env.release ./gradlew app:installDebug"],
         "parallel": false
       }
     },
