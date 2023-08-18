@@ -50,6 +50,14 @@
       "dependsOn": ["ensure-symlink", "sync-deps"],
       "options": {}
     },
+    "run-android-staging": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/bierdeliveryapp/android",
+        "commands": ["ENVFILE=.env.staging ./gradlew app:installDebug"],
+        "parallel": false
+      }
+    },
     "build-android": {
       "executor": "@nx/react-native:build-android",
       "outputs": [
