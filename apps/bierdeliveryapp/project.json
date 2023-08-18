@@ -20,7 +20,20 @@
     "run-ios": {
       "executor": "@nx/react-native:run-ios",
       "dependsOn": ["ensure-symlink", "sync-deps", "pod-install"],
-      "options": {}
+      "options": {
+        "install": false,
+        "simulator": "iPhone 14 Pro Max",
+        "scheme": "Bierdeliveryapp"
+      }
+    },
+    "run-ios-staging": {
+      "executor": "@nx/react-native:run-ios",
+      "dependsOn": ["ensure-symlink", "sync-deps", "pod-install"],
+      "options": {
+        "install": false,
+        "simulator": "iPhone 14 Pro Max",
+        "scheme": "Bierdeliveryapp-Staging"
+      }
     },
     "bundle-ios": {
       "executor": "@nx/react-native:bundle",

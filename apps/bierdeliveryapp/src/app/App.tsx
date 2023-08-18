@@ -11,6 +11,7 @@ import {
   Linking,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
+import Config from "react-native-config";
 
 export const App = () => {
   const [whatsNextYCoord, setWhatsNextYCoord] = useState<number>(0);
@@ -30,7 +31,7 @@ export const App = () => {
           <View style={styles.section}>
             <Text style={styles.textLg}>Hello there,</Text>
             <Text style={[styles.textXL, styles.appTitleText]} testID="heading">
-              Welcome Bierdeliveryapp 👋
+              Welcome {Config.API_URL} 👋
             </Text>
           </View>
           <View style={styles.section}>
