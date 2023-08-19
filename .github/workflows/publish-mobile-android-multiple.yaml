@@ -48,6 +48,10 @@ jobs:
             matrix="${matrix%?}]"
             echo "::set-output name=matrix::$matrix"
 
+        - name: Debug Matrix
+          run: echo "${{ steps.set-matrix.outputs.matrix }}"
+
+
   android-build:
     needs: prepare-matrix
     name: Android Build
