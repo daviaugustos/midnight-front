@@ -40,11 +40,11 @@ jobs:
             echo "API Response:"
             echo "$response"
             
-            # Now set the matrix output
-            echo "::set-output name=matrix::$response"
+            # Now set the matrix output using the new environment file method
+            echo "matrix=$response" >> $GITHUB_ENV
 
         - name: Debug matrix value
-          run: echo "${{needs.prepare-matrix.outputs.matrix}}"
+          run: echo "$matrix"
 
 
   android-build:
