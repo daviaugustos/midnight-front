@@ -40,7 +40,7 @@ jobs:
             echo "matrix=$(jq -r -c . <<< "$response")" >> $GITHUB_OUTPUT
 
         - name: Debug matrix value
-          run: jq . <<< '${{ steps.setup.outputs.matrix }}'
+          run: echo "${{ fromJson(steps.setup.outputs.matrix) }}"
 
 
   android-build:
