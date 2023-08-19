@@ -44,7 +44,7 @@ jobs:
             echo "matrix=$response" >> $GITHUB_OUTPUT
 
         - name: Debug matrix value
-          run: echo "$matrix"
+          run: echo "matrix"
 
 
   android-build:
