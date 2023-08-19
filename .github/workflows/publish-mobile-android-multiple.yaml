@@ -34,15 +34,16 @@ jobs:
         - name: Fetch clients data
           id: fetch-clients
           run: |
-            response=$(curl -s "https://api.mockfly.dev/mocks/4fefda6e-e62c-4653-a66d-126c3ef690f8/clients")
+            response=$(curl -s "https://api.mockfly.dev/mocks/4fefda6e-e62c-4653-a66d-126c3ef690f8/clients" | base64)
             echo "::set-output name=response::$response"
 
         - name: Set matrix for next job
           id: set-matrix
           run: |
-            response='${{ steps.fetch-clients.outputs.response }}'
-            matrix=$(echo "$response" | jq -c '[.[]]')
-            echo "::set-output name=matrix::$matrix"
+            encoded_response='${{ steps.fetch-clients.outputs.response }}'
+            decoded=$(echo "$encoded_response" | base64 --decode)
+            formatted=$(echo "$decoded" | jq '[.[] | {id: .id, primary_color: .primary_color, app_name: .app_name, appcenter_id: .appcenter_id, api_token: .api_token}]')
+            echo "::set-output name=matrix::$formatted"
 
         - name: Debug Matrix
           run: echo "${{ steps.set-matrix.outputs.matrix }}"
