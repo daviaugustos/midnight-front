@@ -94,7 +94,7 @@ jobs:
 
     steps:
       - name: Check matrix value
-      run: echo "matrix"
+        run: echo "matrix"
 
       - name: Check out Git repository
         uses: actions/checkout@v2
