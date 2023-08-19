@@ -23,7 +23,7 @@ env:
   ANDROID_APK_FILENAME: ${{ 'app-release.apk' }}
 
 jobs:
-  prepare-matrix:
+  prepare-matrix: 
       runs-on: ubuntu-latest
       outputs:
         matrix: ${{ steps.set-matrix.outputs.matrix }}
@@ -41,7 +41,7 @@ jobs:
             echo "$response"
             
             # Now set the matrix output using the new environment file method
-            echo "matrix=$response" >> $GITHUB_ENV
+            echo "matrix=$response" >> $GITHUB_OUTPUT
 
         - name: Debug matrix value
           run: echo "$matrix"
@@ -85,14 +85,17 @@ jobs:
           path: ${{ env.NX_RN_APP_PATH }}${{ env.ANDROID_VARIANT_RELEASE_PATH }}
 
   deploy:
-    needs: [android-build]
+    needs: [android-build, prepare-matrix]
     if: success()
     name: Deploy
     runs-on: ubuntu-latest
     strategy:
-      matrix: ${{fromJson(needs.prepare-matrix.outputs.matrix)}}
+      matrix: ${{ fromJson(needs.prepare-matrix.outputs.matrix) }}
 
     steps:
+      - name: Check matrix value
+      run: echo "matrix"
+
       - name: Check out Git repository
         uses: actions/checkout@v2
 
