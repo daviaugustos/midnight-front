@@ -40,7 +40,7 @@ jobs:
         - name: Set matrix for next job
           id: set-matrix
           run: |
-            response="${{ steps.fetch-clients.outputs.response }}"
+            response='${{ steps.fetch-clients.outputs.response }}'
             matrix="["
             for row in $(echo "${response}" | jq -r '.[] | @base64'); do
                 matrix="${matrix}$(echo "${row}" | base64 --decode),"
