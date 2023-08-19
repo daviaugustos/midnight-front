@@ -42,7 +42,6 @@ jobs:
         - name: Debug matrix value
           run: echo "${{ fromJson(steps.set-matrix.outputs.matrix) }}"
 
-
   android-build:
     needs: prepare-matrix
     name: Android Build
@@ -78,7 +77,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ env.ANDROID_APK_FILENAME }}
+          name: ${{ matrix.appcenter_id }}
           path: ${{ env.NX_RN_APP_PATH }}${{ env.ANDROID_VARIANT_RELEASE_PATH }}
 
   deploy:
@@ -99,7 +98,7 @@ jobs:
 
       - uses: actions/download-artifact@v3
         with:
-          name: ${{ env.ANDROID_APK_FILENAME }}
+          name: ${{ matrix.appcenter_id }}
 
       - name: Set up our JDK environment
         uses: actions/setup-java@v1.4.3
