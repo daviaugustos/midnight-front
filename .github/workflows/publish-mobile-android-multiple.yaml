@@ -38,7 +38,7 @@ jobs:
             echo "::set-output name=matrix::$response"
 
         - name: Debug matrix value
-          run: echo "${{fromJson(needs.prepare-matrix.outputs.matrix)}}"
+          run: echo "${{needs.prepare-matrix.outputs.matrix}}"
 
 
   android-build:
