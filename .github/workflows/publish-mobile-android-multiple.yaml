@@ -41,11 +41,7 @@ jobs:
           id: set-matrix
           run: |
             response='${{ steps.fetch-clients.outputs.response }}'
-            matrix="["
-            for row in $(echo "${response}" | jq -r '.[] | @base64'); do
-                matrix="${matrix}$(echo "${row}" | base64 --decode),"
-            done
-            matrix="${matrix%?}]"
+            matrix=$(echo "$response" | jq -c '[.[]]')
             echo "::set-output name=matrix::$matrix"
 
         - name: Debug Matrix
