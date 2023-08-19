@@ -1,0 +1,123 @@
+name: Publish Mobile Android - Multiple
+
+on:
+  workflow_dispatch:
+    inputs:
+      releaseNotes:
+        description: 'Changes on this build: '
+        required: true
+        default: 'No relevant changes.'
+        type: string
+  push:
+    branches:
+      - 'release'
+    paths:
+      - 'apps/bierdeliveryapp/**/*'
+      - 'libs/bierdeliveryapp/**/*'
+
+env:
+  NX_RN_APP_PATH: ${{ 'apps/bierdeliveryapp' }}
+  NX_RN_APP_NAME: ${{ 'bierdeliveryapp' }}
+  ANDROID_VARIANT: ${{ '' }}
+  ANDROID_VARIANT_RELEASE_PATH: ${{ '/android/app/build/outputs/apk/release' }}
+  ANDROID_APK_FILENAME: ${{ 'app-release.apk' }}
+
+jobs:
+  prepare-matrix:
+      runs-on: ubuntu-latest
+      outputs:
+        matrix: ${{ steps.set-matrix.outputs.matrix }}
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
+
+        - name: Fetch clients data
+          id: fetch-clients
+          run: |
+            response=$(curl -s "https://api.mockfly.dev/mocks/4fefda6e-e62c-4653-a66d-126c3ef690f8/clients")
+            echo "::set-output name=response::$response"
+
+        - name: Set matrix for next job
+          id: set-matrix
+          run: |
+            response="${{ steps.fetch-clients.outputs.response }}"
+            matrix="["
+            for row in $(echo "${response}" | jq -r '.[] | @base64'); do
+                matrix="${matrix}$(echo "${row}" | base64 --decode),"
+            done
+            matrix="${matrix%?}]"
+            echo "::set-output name=matrix::$matrix"
+
+  android-build:
+    needs: prepare-matrix
+    name: Android Build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{fromJson(needs.prepare-matrix.outputs.matrix)}}
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - name: Info
+        run: |
+          # Here, you'd run your React Native build and deployment commands.
+          # Use the ${{ matrix.app_name }}, ${{ matrix.primary_color }}, and ${{ matrix.id }} as required.
+
+          echo "Building for: ${{ matrix.app_name }} with color ${{ matrix.primary_color }} and ID ${{ matrix.id }}"
+
+      - uses: actions/checkout@v2
+      - name: Build Android Composite
+        uses: daviaugustos/Nrwl-Nx-Android-Build-Action@v6
+        with:
+          app-path: ${{ env.NX_RN_APP_PATH }}
+          nx-app-name: ${{ env.NX_RN_APP_NAME }}
+          signing-key: ${{ secrets.BIER_DELIVERY_APP_ANDROID_SIGNING_KEY }}
+          keystore-alias: ${{ secrets.BIER_DELIVERY_APP_ANDROID_ALIAS }}
+          keystore-password: ${{ secrets.BIER_DELIVERY_APP_ANDROID_KEY_STORE_PASSWORD }}
+          key-password: ${{ secrets.BIER_DELIVERY_APP_ANDROID_KEY_PASSWORD }}
+          variant-flavor: ${{ env.ANDROID_VARIANT }}
+          variant-flavor-apk-path:  ${{ env.ANDROID_VARIANT_RELEASE_PATH }}
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.ANDROID_APK_FILENAME }}
+          path: ${{ env.NX_RN_APP_PATH }}${{ env.ANDROID_VARIANT_RELEASE_PATH }}
+
+  deploy:
+    needs: [android-build]
+    if: success()
+    name: Deploy
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{fromJson(needs.prepare-matrix.outputs.matrix)}}
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: ${{ env.ANDROID_APK_FILENAME }}
+
+      - name: Set up our JDK environment
+        uses: actions/setup-java@v1.4.3
+        with:
+          java-version: 11
+
+      - name: Upload artifact to App Center
+        uses: wzieba/AppCenter-Github-Action@v1
+        with:
+          appName: Midnight-Front/${{ matrix.appcenter_id }}
+          token: ${{ matrix.api_token }}
+          group: Collaborators
+          file: ${{ env.ANDROID_APK_FILENAME }}
+          notifyTesters: true
+          debug: false
+          releaseNotes: ${{ github.event.inputs.releaseNotes }}
+
+      - name: Delete Artifact
+        uses: geekyeggo/delete-artifact@v1
+        with:
+          name: ${{ env.ANDROID_APK_FILENAME }}
