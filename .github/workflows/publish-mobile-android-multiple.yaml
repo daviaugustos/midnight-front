@@ -61,8 +61,8 @@ jobs:
 
           echo "Building for: ${{ matrix.app_name }} with color ${{ matrix.primary_color }} and ID ${{ matrix.id }}"
 
-    - name: Change Android App Name
-      run: |
+      - name: Change Android App Name
+        run: |
           echo "Changing app name to '${{ matrix.app_name }}'"
           sed -i 's/<string name="app_name">Bierdeliveryapp<\/string>/<string name="app_name">${{ matrix.app_name }}<\/string>/' ./apps/bierdeliveryapp/android/app/src/main/res/values/strings.xml
 
